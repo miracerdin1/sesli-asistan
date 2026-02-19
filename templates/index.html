@@ -3,38 +3,284 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sesli Asistan</title>
+    <title>AI Asistan</title>
+    <!-- Google Fonts -->
     <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
+    <style>
+      :root {
+        --primary-color: #00f2ff;
+        --secondary-color: #00aaff;
+        --bg-color: #0d0d0d;
+        --orb-size: 150px;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: var(--bg-color);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      /* Abstract Background */
+      .bg-glow {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+        z-index: -1;
+      }
+
+      /* Central Orb Container */
+      .visualizer-container {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* The Orb */
+      .orb {
+        width: var(--orb-size);
+        height: var(--orb-size);
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          var(--primary-color) 0%,
+          transparent 70%
+        );
+        box-shadow: 0 0 50px var(--secondary-color);
+        opacity: 0.8;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      /* Rotating Rings */
+      .ring {
+        position: absolute;
+        border: 2px solid rgba(0, 242, 255, 0.3);
+        border-radius: 50%;
+        animation: spin 10s linear infinite;
+      }
+
+      .ring:nth-child(1) {
+        width: 200px;
+        height: 200px;
+        border-top-color: transparent;
+        animation-duration: 8s;
+      }
+      .ring:nth-child(2) {
+        width: 240px;
+        height: 240px;
+        border-bottom-color: transparent;
+        animation-duration: 12s;
+        animation-direction: reverse;
+      }
+      .ring:nth-child(3) {
+        width: 280px;
+        height: 280px;
+        border-left-color: transparent;
+        border-style: dashed;
+        animation-duration: 20s;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* States via Classes */
+
+      /* IDLE: Gentle breathing */
+      .orb.idle {
+        animation: breathe 4s ease-in-out infinite;
+      }
+      @keyframes breathe {
+        0% {
+          transform: scale(1);
+          opacity: 0.6;
+          box-shadow: 0 0 40px var(--secondary-color);
+        }
+        50% {
+          transform: scale(1.1);
+          opacity: 0.8;
+          box-shadow: 0 0 60px var(--primary-color);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0.6;
+          box-shadow: 0 0 40px var(--secondary-color);
+        }
+      }
+
+      /* LISTENING: Active ripple/pulse */
+      .orb.listening {
+        background: radial-gradient(
+          circle,
+          #00ff88 0%,
+          transparent 70%
+        ); /* Greenish */
+        box-shadow: 0 0 80px #00ff88;
+        animation: ripple 1s infinite alternate;
+      }
+      @keyframes ripple {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.3);
+        }
+      }
+
+      /* PROCESSING: Fast spin/thinking */
+      .orb.processing {
+        background: radial-gradient(
+          circle,
+          #ff0055 0%,
+          transparent 70%
+        ); /* Red/Pink */
+        box-shadow: 0 0 80px #ff0055;
+        animation: think 0.5s infinite alternate;
+      }
+      @keyframes think {
+        0% {
+          transform: scale(0.9) rotate(0deg);
+        }
+        100% {
+          transform: scale(1.1) rotate(10deg);
+        }
+      }
+
+      /* SPEAKING: Vibration */
+      .orb.speaking {
+        background: radial-gradient(
+          circle,
+          #ad00ff 0%,
+          transparent 70%
+        ); /* Purple */
+        box-shadow: 0 0 80px #ad00ff;
+        animation: speak 0.2s infinite;
+      }
+      @keyframes speak {
+        0% {
+          transform: scale(1);
+        }
+        25% {
+          transform: scale(1.1);
+        }
+        50% {
+          transform: scale(1);
+        }
+        75% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Status Text / Subtitle */
+      .status-container {
+        margin-top: 50px;
+        text-align: center;
+        z-index: 10;
+      }
+
+      #status {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 10px;
+        font-family: "Orbitron", sans-serif;
+        letter-spacing: 2px;
+      }
+
+      #subtitle {
+        font-size: 1.5rem;
+        font-weight: 500;
+        min-height: 30px;
+        color: white;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        max-width: 80%;
+        margin: 0 auto;
+      }
+
+      /* Microphone Button (Hidden but clickable area? Or centralized control) */
+      /* For this premium feel, maybe clicking the Orb toggles listening? */
+      /* Let's keep a sleek button at bottom */
+      .control-bar {
+        position: absolute;
+        bottom: 40px;
+        display: flex;
+        gap: 20px;
+      }
+
+      .mic-btn {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex; /* Centering icon */
+        justify-content: center;
+        align-items: center;
+      }
+
+      .mic-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: white;
+      }
+
+      .mic-btn.active {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        box-shadow: 0 0 20px var(--primary-color);
+      }
+    </style>
   </head>
   <body>
-    <div class="container">
-      <header>
-        <h1>AI Asistan</h1>
-        <p>Size nasıl yardımcı olabilirim?</p>
-      </header>
+    <div class="bg-glow"></div>
 
-      <main>
-        <div id="chat-box" class="chat-box">
-          <div class="message assistant">
-            Merhaba! Ben senin yapay zeka asistanınım. Bir komut ver veya sohbet
-            et.
-          </div>
-        </div>
+    <div class="visualizer-container">
+      <!-- Rings for decoration -->
+      <div class="ring"></div>
+      <div class="ring"></div>
+      <div class="ring"></div>
 
-        <div class="controls">
-          <button id="mic-btn" class="mic-btn">
-            <i class="fas fa-microphone"></i>
-          </button>
-          <div id="status" class="status">Dinlemek için mikrofona basın...</div>
-        </div>
-      </main>
+      <!-- Main Orb -->
+      <div id="visualizer-orb" class="orb idle"></div>
+    </div>
+
+    <div class="status-container">
+      <div id="status">HAZIR</div>
+      <div id="subtitle"></div>
+    </div>
+
+    <div class="control-bar">
+      <button id="mic-btn" class="mic-btn">
+        <i class="fas fa-microphone"></i>
+      </button>
     </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
