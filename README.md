@@ -1,0 +1,1 @@
+Bu terminal aracılığıyla sesli komut sayesinde bilgisayarımdaki dosyaları açmayı, içlerine yazı yazmayı ve yapay zeka entegrasyonu ile sorduğum soruları Gemini yapay zekası ile de cevaplayan bir asistandır. Bu Metin sesli Asistan yardımıyla oluşturulmuştur.
