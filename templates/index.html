@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sesli Asistan</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>AI Asistan</h1>
+        <p>Size nasıl yardımcı olabilirim?</p>
+      </header>
+
+      <main>
+        <div id="chat-box" class="chat-box">
+          <div class="message assistant">
+            Merhaba! Ben senin yapay zeka asistanınım. Bir komut ver veya sohbet
+            et.
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="mic-btn" class="mic-btn">
+            <i class="fas fa-microphone"></i>
+          </button>
+          <div id="status" class="status">Dinlemek için mikrofona basın...</div>
+        </div>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>
